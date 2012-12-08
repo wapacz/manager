@@ -25,7 +25,7 @@
                 $td_r.css({width: 100/columnCount+"%"});
                 
                 //$td_r.selectable();
-                $td_r.sortable({
+                /*$td_r.sortable({
                     connectWith: ".kanban-board-column",
                     placeholder: ".kanban-issue-placeholder",
                     start: function(event, ui) {
@@ -69,9 +69,9 @@
                         $(ui.item[0]).fadeIn('slow');
                     }
                 });
-                $td_r.disableSelection();
-                //$td_r.droppable({
-                    //accept: ".kanban-issue",
+                $td_r.disableSelection();*/
+                $td_r.droppable({
+                    accept: ".kanban-issue",
                     //drop: function( event, ui ) {
                         //$(this).find('.kanban-issue').sort().appendTo($(this));
                         //$(this)
@@ -88,7 +88,7 @@
                         //ui.draggable.appendTo($container);
                         //ui.draggable.show();
                    // }
-                //});
+                });
                 
                 $kbIssue = $("<div>").kanbanIssue({heading: "Issue 1", type: "CSR", priority: 1});                $td_r.append($kbIssue);
                 $kbIssue = $("<div>").kanbanIssue({heading: "Issue 2", type: "CSR", priority: 2});
@@ -173,15 +173,15 @@
             //this.sortable(
             //    connectWith: ".kanban-board-column"
             //);
-            //this.draggable({
-            //    revert: "invalid",
+            this.draggable({
+                revert: "invalid",
                 //containment: "document",
                 //snap: ".kanban-issue", 
                 //snapMode: "outer",
                 //helper: "clone",
             //    start: function() { $(this).addClass("onTop"); },
             //    stop: function() { $(this).removeClass("onTop"); }
-            //});
+            });
             //this.disableSelection();
             
             this.dblclick(function() {
