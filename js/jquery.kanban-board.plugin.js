@@ -72,7 +72,39 @@
                 $td_r.disableSelection();*/
                 $td_r.droppable({
                     accept: ".kanban-issue",
-                    //drop: function( event, ui ) {
+                    drop: function( event, ui ) {
+                        
+                        //$(ui.draggable).hide();
+                        
+                        var mylist = null;
+                        
+                        if(false) {
+                            mylist = $(ui.draggable).data('lastParent');
+                            mylist.append(ui.draggable);
+                        }
+                        else
+                            mylist = $(this);
+                        
+                        var listitems = mylist.children('.kanban-issue').get();
+                        
+                        listitems.sort(function(a, b) {
+                            
+                            var compA = parseInt($(a).attr("id"));
+                            var compB = parseInt($(b).attr("id"));
+                            
+                            return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+                        });        
+                        $.each(listitems, function(idx, itm) {
+                            mylist.remove(itm);
+                        });
+                        $.each(listitems, function(idx, itm) {
+                            mylist.append(itm);
+                        });
+                        
+                        //$(ui.draggable).fadeIn('slow');
+                    
+                    
+                    
                         //$(this).find('.kanban-issue').sort().appendTo($(this));
                         //$(this)
                         //    .addClass( "ui-state-highlight" )
@@ -87,10 +119,11 @@
                         //$container = $(this);
                         //ui.draggable.appendTo($container);
                         //ui.draggable.show();
-                   // }
+                    }
                 });
                 
-                $kbIssue = $("<div>").kanbanIssue({heading: "Issue 1", type: "CSR", priority: 1});                $td_r.append($kbIssue);
+                $kbIssue = $("<div>").kanbanIssue({heading: "Issue 1", type: "CSR", priority: 1});                
+                $td_r.append($kbIssue);
                 $kbIssue = $("<div>").kanbanIssue({heading: "Issue 2", type: "CSR", priority: 2});
                 $td_r.append($kbIssue);
                 $kbIssue = $("<div>").kanbanIssue({heading: "Issue 3", type: "TR", priority: 3});
