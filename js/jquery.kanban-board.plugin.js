@@ -175,8 +175,6 @@
             //var options = this.data('kanban-issue.options');
             var $detailsContainer = $("<div>");
 
-            alert(task.heading);
-            
             if(!task.priority)
                 task.priority = 3;
             this.attr({"id":id});
@@ -184,19 +182,6 @@
             this.addClass("kanban-issue ui-widget ui-widget-content ui-corner-all");
             this.append($("<div>").text(task.heading));
             this.append($("<div>").text(task.type).addClass("type"));
-            //this.sortable(
-            //    connectWith: ".kanban-board-column"
-            //);
-            //this.draggable({
-            //    revert: "invalid",
-                //containment: "document",
-                //snap: ".kanban-issue", 
-                //snapMode: "outer",
-                //helper: "clone",
-            //    start: function() { $(this).addClass("onTop"); },
-            //    stop: function() { $(this).removeClass("onTop"); }
-            //});
-            //this.disableSelection();
             
             this.dblclick(function() {
                 $detailsContainer.dialog({
