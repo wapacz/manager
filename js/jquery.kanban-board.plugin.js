@@ -9,9 +9,9 @@
             var options = this.data('kanban-board.options');
             var oldColumn = null;
             
-            $table = $("<table>").addClass("kanban-board ui-widget-content ui-corner-all");
-            $th = $("<tr>").addClass("header ui-widget-header");
-            $tr = $("<tr>").addClass("body ui-widget-content");
+            var $table = $("<table>").addClass("kanban-board ui-widget-content ui-corner-all");
+            var $th = $("<tr>").addClass("header ui-widget-header");
+            var $tr = $("<tr>").addClass("body ui-widget-content");
             
             $table.append($th);
             $table.append($tr);
@@ -30,7 +30,7 @@
                     placeholder: ".kanban-issue-placeholder",
                     start: function(event, ui) {
                         var element = $(ui.item[0]);
-                        element.data('lastParent', element.parent());
+                        element.data('lastparent', element.parent());
                     },
                     stop: function(event, ui) {
                         $('.kanban-board-column').removeClass('kanban-board-column-highlight');
@@ -41,8 +41,8 @@
                         $(this).addClass('kanban-board-column-highlight');
                     },
                     update: function(event, ui) {
-                        
-                        $(ui.item[0]).hide();
+                        //console.log("*");
+                        //$(ui.item[0]).hide();
                         
                         var mylist = null;
                         
@@ -56,9 +56,17 @@
                         var listitems = mylist.children('.kanban-issue').get();
                         
                         listitems.sort(function(a, b) {
-                            var compA = parseInt($(a).attr("id"));
-                            var compB = parseInt($(b).attr("id"));
-                            return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+                            var taskA = $(a).data('kanban-issue.task');
+                            var taskB = $(b).data('kanban-issue.task');
+
+                            var prioA = parseInt(taskA.priority);
+                            var prioB = parseInt(taskB.priority);
+                            var headA = taskA.heading.toLowerCase();
+                            var headB = taskB.heading.toLowerCase();
+
+                            //alert(headA<headB);
+                            
+                            return (prioA < prioB  ) ? -1 : (prioA > prioB) ? 1 : ( (headA < headB) ? -1 : 1 );
                         });        
                         $.each(listitems, function(idx, itm) {
                             //console.log("idx = "+idx+", itm = "+itm);
@@ -66,7 +74,7 @@
                             mylist.append(itm);
                         });
                         
-                        $(ui.item[0]).fadeIn('slow');
+                        //$(ui.item[0]).fadeIn('slow');
                     }
                 });
                 $td_r.disableSelection();
@@ -173,8 +181,11 @@
 	var methods = {
         init:function(id, task) {
             //var options = this.data('kanban-issue.options');
+            
+            this.data('kanban-issue.task', task);
+            
             var $detailsContainer = $("<div>");
-
+            
             if(!task.priority)
                 task.priority = 3;
             this.attr({"id":id});
@@ -182,6 +193,14 @@
             this.addClass("kanban-issue ui-widget ui-widget-content ui-corner-all");
             this.append($("<div>").text(task.heading));
             this.append($("<div>").text(task.type).addClass("type"));
+
+            $detailsContainer.append($("<div>").text("Id: " + id));
+            $detailsContainer.append($("<div>").text("Heading: " + task.heading));
+            $detailsContainer.append($("<div>").text("Type: " + task.type));
+            
+            this.click(function() {
+                $(this).css({"border": "1px red dotted", "background": "green"});
+            });
             
             this.dblclick(function() {
                 $detailsContainer.dialog({
@@ -192,13 +211,14 @@
                     modal: false,
                     buttons: {
                         "Save": function() {
+                            //TODO: save on server
                             $(this).dialog("close");
                         },
                         Cancel: function() {
                             $(this).dialog("close");
                         }
                     }
-                });
+                })
             });          
             
            
@@ -208,20 +228,20 @@
     $.fn.kanbanIssue = function(options) {
         method = null;
         /***** Options initialize *****/
-        var defaultOptions = {
-        
-        };
+        //var defaultOptions = {
+        //
+        //};
         
         /***** Initialize elements *****/
-        var elements = {
-            container: {
-                instance: this
-            }
-        };
+        //var elements = {
+        //    container: {
+        //        instance: this
+        //    }
+        //};
         
         /***** Data initialize *****/
-        this.data('kanban-issue.options', options);
-        this.data('kanban-issue.elements', elements);
+        //this.data('kanban-issue.options', options);
+        //this.data('kanban-issue.elements', elements);
         
         /***** Method resolving *****/
         if(methods[method]) {
