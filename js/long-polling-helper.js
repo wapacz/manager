@@ -27,7 +27,7 @@
             success: function(data) {
                 if(data === true) {
                     //aktualizuj_wiadomosci(long_poll);
-                    window.location.href = "http://lapacz.com.pl/manager";
+                    window.location.href = "http://www.catcher.com.pl/manager";
                 }
                 else {
                     long_poll();

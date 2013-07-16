@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<link rel="stylesheet" href="./css/clear.css">
 <link rel="stylesheet" href="./css/smoothness/jquery-ui-1.9.2.custom.css">
 <link rel="stylesheet" href="./css/jquery.kanban-board.plugin.css">
 <link rel="stylesheet" href="./css/custom.css">
@@ -30,8 +31,9 @@ $(document).ready(function() {
   */
   
   $("#output").kanbanBoard();
+  
 
-  refresh_modified();
+  //refresh_modified();
 });
 </script>
 </head>

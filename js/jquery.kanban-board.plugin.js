@@ -10,6 +10,7 @@
             var oldColumn = null;
             
             $table = $("<table>").addClass("kanban-board ui-widget-content ui-corner-all");
+            //$table.colResizable();
             $th = $("<tr>").addClass("header ui-widget-header");
             $tr = $("<tr>").addClass("body ui-widget-content");
             
@@ -21,7 +22,7 @@
                 $td_h = $("<td>").addClass("ui-widget-header").text(columns[i]);
                 $th.append($td_h);
                 
-                $td_r = $("<td>").addClass("kanban-board-column ui-widget-content")
+                $td_r = $("<td>").addClass("kanban-board-column ui-widget-content").attr({'id':columns[i]});
                 $td_r.css({width: 100/columnCount+"%"});
                 
                 //$td_r.selectable();
@@ -71,11 +72,44 @@
                 });
                 $td_r.disableSelection();*/
                 $td_r.droppable({
+                    //tolerance: 'fit',
+                    //helper: 'clone',
                     accept: ".kanban-issue",
-                    drop: function( event, ui ) {
+                    hoverClass: "ui-state-highlight",
+                    addClasses: false,
+                    activate: function(event, ui) {
+                        console.log('activate');
+                        $(ui.draggable).zIndex(5000);
+                        $("div.issue-1").each(function(key,value) {
+                            $(value).zIndex(4999);
+                            //$(value).animate({opacity: 0.0});
+                        });
+                    },
+                    drop: function(event, ui) {
+                        console.log('dropped to: ' + $(event.target).attr('id'));
                         
+                        //$(event.target).children().each(function(){
+                        //    console.log($(this).attr('id'));
+                        //});
+                        $(ui.draggable).appendTo($(event.target));
+                        $(ui.draggable).css({'possition':'', 'top':'', 'left':''}); // clear 
+                        //$(ui.draggable).removeAttr('style');
+                        $(ui.draggable).zIndex(0);
+                        //$(ui.draggable).css('top', ui.position.top);
+                        //$(ui.draggable).css('left', ui.position.left);
                         //$(ui.draggable).hide();
                         
+                        $(ui.draggable).effect("highlight", {}, 2000);
+                        $("div.issue-1").each(function(key,value) {
+                            $(value).appendTo($(event.target));
+                            //moved to deactivate function
+                            //$(value).css({'possition':'', 'top':'', 'left':''}); // clear 
+                            //$(value).zIndex(0);
+                            $(value).effect("highlight", {}, 2000);
+                        });
+                        
+                        $(".kanban-issue").removeClass("ui-state-highlight");
+                        /*
                         var mylist = null;
                         
                         if(false) {
@@ -100,7 +134,7 @@
                         $.each(listitems, function(idx, itm) {
                             mylist.append(itm);
                         });
-                        
+                        */
                         //$(ui.draggable).fadeIn('slow');
                     
                     
@@ -119,10 +153,18 @@
                         //$container = $(this);
                         //ui.draggable.appendTo($container);
                         //ui.draggable.show();
+                    },
+                    deactivate: function( event, ui ) {
+                        console.log('deactivate');
+                        $("div.issue-1").each(function(key,value) {
+                                $(value).css({'possition':'', 'top':'', 'left':''}); // clear 
+                                $(value).zIndex(0);
+                                //$(value).animate({opacity: 1.0});
+                        });
                     }
                 });
                 
-                $kbIssue = $("<div>").kanbanIssue({heading: "Issue 1", type: "CSR", priority: 1});                
+                $kbIssue = $("<div>").kanbanIssue({heading: "Issue 1", type: "CSR", priority: 1});  
                 $td_r.append($kbIssue);
                 $kbIssue = $("<div>").kanbanIssue({heading: "Issue 2", type: "CSR", priority: 2});
                 $td_r.append($kbIssue);
@@ -140,8 +182,11 @@
             
             this.addClass("ui-widget");
             
-            //$table.colResizable();
             this.append($table);
+            
+            //$table.colResizable({
+                //liveDrag: true
+            //});
             
             return this;
         },
@@ -156,7 +201,7 @@
     $.fn.kanbanBoard = function(method, options) {
         /***** Options initialize *****/
         var defaultOptions = {
-            columns: ['TODO', 'Selected', 'Ongoing', 'Desing', 'Troubleshooting', 'Done'],
+            columns: ['TODO', 'Selected', 'Ongoing', 'Design', 'Troubleshooting', 'Done'],
             dataLink: "json.php",
             data: "",
             checkboxColumn: true,
@@ -206,14 +251,68 @@
             //this.sortable(
             //    connectWith: ".kanban-board-column"
             //);
+            //TODO: shoudl be moved to better place
+            //var initLeftOffset = []
+            //        ,initTopOffset = [];	    
+            var selectedList = [];
+            this.click( function() {
+                console.log('selected');
+                $(this).toggleClass("ui-state-highlight");
+                //$(this).hide();
+                //selectedList.push($(this));
+            });            
+            
             this.draggable({
                 revert: "invalid",
+                revertDuration: 0,
+                delay: 150,
                 //containment: "document",
                 //snap: ".kanban-issue", 
                 //snapMode: "outer",
                 //helper: "clone",
             //    start: function() { $(this).addClass("onTop"); },
             //    stop: function() { $(this).removeClass("onTop"); }
+                ////start: function (event,ui) {
+                ////    console.log("start");
+                ////    var pos = $(this).position();
+                ////    //var counter = 0;
+                ////    $("div.issue-1").each(function(key,value) {
+                ////        var elemPos = $(value).position();
+                ////        $(value).zIndex(4999);
+                ////        initLeftOffset[key] = elemPos.left - pos.left;
+                ////        initTopOffset[key] = elemPos.top - pos.top;
+                ////        //initLeftOffset[key] = pos.left + (counter++)*2;
+                ////        //initTopOffset[key] = pos.top - (counter++)*1;
+                ////    });
+                ////},
+                drag: function(event,ui) {
+                    var pos = $(this).offset();
+                    var lenght = $("div.issue-1").length;
+                    $("div.issue-1").each(function(key,value) {
+                        //$(value).offset({
+                        //    left: pos.left + initLeftOffset[key], 
+                        //    top: pos.top + initTopOffset[key]
+                        //});	
+                        $(value).offset({
+                            left: pos.left + (lenght - key)*2, 
+                            top: pos.top + (lenght - key)*2
+                        });	                        
+                    });
+                }//,
+                //stop: function(event,ui) {
+                //    console.log("stop");
+                //    var pos = $(this).offset();
+                    //$("div.issue-1").each(function(key,value) {
+                        //$(value).offset({
+                        //    left: pos.left + initLeftOffset[key], 
+                        //    top: pos.top + initTopOffset[key]
+                        //});
+                        
+                        //$(value).appendTo($(event.target));
+                        //$(value).css({'possition':'', 'top':'', 'left':''}); // clear 
+                        //$(value).zIndex(0);
+                    //});
+                //},
             });
             //this.disableSelection();
             
